@@ -141,7 +141,8 @@ function resizeWindow(flag) {
             var w = window.innerWidth % init.Range.size24TableSlice
             $('.rRow .rCell').css('width', parseFloat(100 / init.Range.size24TableSlice) + '%')
             for (var i = 0; i < w; i++)
-                $('.rRow .rCell:nth-child(' + parseInt(i + 1) + ')').css('width', '-webkit-calc(' + parseFloat(100 / init.Range.size24TableSlice) + '%' + ' + 1px)')
+                //$('.rRow .rCell:nth-child(' + parseInt(i + 1) + ')').css('width', '-webkit-calc(' + parseFloat(100 / init.Range.size24TableSlice) + '%' + ' + 1px)')
+                $('.rRow .rCell:nth-child(' + parseInt(i + 1) + ')').css('width', parseFloat(100 / init.Range.size24TableSlice) + '%')
         } else
             $('.rRow .rCell').css('width', parseFloat(100 / init.Range.size24TableSlice) + '%')
     }
