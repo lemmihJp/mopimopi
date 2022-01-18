@@ -31,24 +31,26 @@ var QueryString = function() {
     return query_string
 }();
 var host_port = QueryString.HOST_PORT;
-while (host_port.endsWith('/')) {
-    host_port = host_port.substring(0, host_port.length - 1)
-}
-if (wsUri.indexOf("//") == 0) {
-    wsUri = wsUri.substring(2)
-}
-if (wsUri.indexOf("ws://") == 0 || wsUri.indexOf("wss://") == 0) {
-    if (host_port.indexOf("ws://") == 0 || host_port.indexOf("wss://") == 0) {
-        wsUri = wsUri.replace(/ws:\/\/@HOST_PORT@/im, host_port);
-        wsUri = wsUri.replace(/wss:\/\/@HOST_PORT@/im, host_port)
-    } else {
-        wsUri = wsUri.replace(/@HOST_PORT@/im, host_port)
+if(host_port != undefined) {
+    while (host_port.endsWith('/')) {
+        host_port = host_port.substring(0, host_port.length - 1)
     }
-} else {
-    if (host_port.indexOf("ws://") == 0 || host_port.indexOf("wss://") == 0) {
-        wsUri = wsUri.replace(/@HOST_PORT@/im, host_port)
+    if (wsUri.indexOf("//") == 0) {
+        wsUri = wsUri.substring(2)
+    }
+    if (wsUri.indexOf("ws://") == 0 || wsUri.indexOf("wss://") == 0) {
+        if (host_port.indexOf("ws://") == 0 || host_port.indexOf("wss://") == 0) {
+            wsUri = wsUri.replace(/ws:\/\/@HOST_PORT@/im, host_port);
+            wsUri = wsUri.replace(/wss:\/\/@HOST_PORT@/im, host_port)
+        } else {
+            wsUri = wsUri.replace(/@HOST_PORT@/im, host_port)
+        }
     } else {
-        wsUri = "ws://" + wsUri.replace(/@HOST_PORT@/im, host_port)
+        if (host_port.indexOf("ws://") == 0 || host_port.indexOf("wss://") == 0) {
+            wsUri = wsUri.replace(/@HOST_PORT@/im, host_port)
+        } else {
+            wsUri = "ws://" + wsUri.replace(/@HOST_PORT@/im, host_port)
+        }
     }
 }
 class ActWebsocketInterface {
@@ -381,6 +383,11 @@ function Person(e, p) {
     }
     if (this.Job != "")
         this.Class = this.Job.toUpperCase();
+    //글섭 6.0 리미트브레이크 대응
+    if (this.Job == "Limit Break") {
+        this.Job = "LMB";
+        this.Class = "LMB";
+    }
     this.petOwner = "";
     this.isPet = !1;
     this.role = "DPS";
@@ -468,7 +475,11 @@ function Person(e, p) {
         "이프리트 에기", "イフリート・エギ", "伊弗利特之灵", "Ifrit-Egi",
         "타이탄 에기", "タイタン・エギ", "泰坦之灵", "Titan-Egi",
         "데미바하무트", "デミ・バハムート", "亚灵神巴哈姆特", "Demi-Bahamut", "デミ・フェニックス",
-        "데미피닉스", "Demi-Phönix", "Demi-Phénix", "Demi-Phoenix", "亚灵神不死鸟"
+        "데미피닉스", "Demi-Phönix", "Demi-Phénix", "Demi-Phoenix", "亚灵神不死鸟",
+        "Ruby Ifrit", "Ifrit rubis", "Rubin-Ifrit", "イフリート・ルビー",
+        "Topaz Titan", "Titan topaze", "Topas-Titan", "タイタン・トパーズ",
+        "Emerald Garuda", "Garuda émeraude", "Smaragd-Garuda", "ガルーダ・エメラルド",
+        "카벙클", "カーバンクル", "Karfunkel", "Carbuncle", "宝石兽"
     ];
     var mchPetsList = ["자동포탑 룩", "オートタレット・ルーク", "车式浮空炮塔", "Selbstschuss-Gyrocopter Turm", "Auto-tourelle Tour", "Rook Autoturret",
         "자동포탑 비숍", "オートタレット・ビショップ", "象式浮空炮塔", "Selbstschuss-Gyrocopter Läufer", "Auto-tourelle Fou", "Bishop Autoturret",
@@ -481,8 +492,9 @@ function Person(e, p) {
     var drkPetsList = ["영웅의 환영", "英雄の影身", "Hochachtung", "Estime", "Esteem", "英雄的掠影"];
     var ninPetsList = ["分身", "Gedoppeltes Ich", "Ombre", "Bunshin", "분신"];
     var astPetsList = ["지상의 별", "アーサリースター", "地星", "Earthly Star", "Étoile terrestre", "Irdischer Stern"];
-    var whmPetsList = ["Liturgy of the Bell", "リタージー・オブ・ベル", "Tintinnabule", "Verbesserter Göttlicher Segen"];
-
+    var whmPetsList = ["Liturgic Bell", "liturgic bell", "リタージー・オブ・ベル", "Tintinnabule", "tintinnabule", "Glockenspiel"];
+    var sgePetsList = ["ペプシス", "Pepsis"];    
+    
     var petsName = this.name.split(' (')[0];
     if (this.Class == "") {
         if (smnPetsList.indexOf(petsName) > -1) {
@@ -515,6 +527,11 @@ function Person(e, p) {
         } else if (whmPetsList.indexOf(petsName) > -1) {
             this.Job = "AVA";
             this.Class = "WHM";
+            this.isPet = true;
+            this.role = "Healer";
+        } else if (sgePetsList.indexOf(petsName) > -1) {
+            this.Job = "AVA";
+            this.Class = "SGE";
             this.isPet = true;
             this.role = "Healer";
         } else if (this.name.indexOf("(") == -1) {
